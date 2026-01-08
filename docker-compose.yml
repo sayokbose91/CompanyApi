@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: companyapi-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: CompanyDb
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - companyapi-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: companyapi-api
+    restart: always
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - MongoDbSettings__ConnectionString=mongodb://mongodb:27017
+      - MongoDbSettings__DatabaseName=CompanyDb
+      - MongoDbSettings__CompaniesCollectionName=companies
+    depends_on:
+      - mongodb
+    networks:
+      - companyapi-network
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  companyapi-network:
+    driver: bridge
