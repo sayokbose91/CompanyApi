@@ -34,7 +34,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Removed UseHttpsRedirection to fix HTTPS warning
+// app.UseHttpsRedirection();
+
 app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
